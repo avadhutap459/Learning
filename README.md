@@ -1,139 +1,24 @@
-# HomeDownload toast.css
-Download toast.css
-March 01, 2011
-.blazored-toast-container {
-    display: flex;
-    flex-direction: column;
-    position: fixed;
-    z-index: 1;
-}
+@using Microsoft.AspNetCore.Components.Web
 
-.position-topleft,
-.position-topright,
-.position-topcenter {
-    top: 0;
-}
-
-.position-bottomleft,
-.position-bottomright,
-.position-bottomcenter {
-    bottom: 0;
-}
-
-.blazored-toast {
-    display: flex;
-    flex-direction: row;
-    animation: fadein 1.5s;
-    margin-bottom: 1rem;
-    padding: 1rem 1.25rem;
-    color: #fff;
-    width: 100vw;
-    box-shadow: rgba(0,0,0,0.25) 0px 10px 40px;
-}
-
-.blazored-toast-info {
-    background-color: #34a9ad;
-}
-
-.blazored-toast-success {
-    background-color: #5fba7d;
-}
-
-.blazored-toast-warning {
-    background-color: #c1c13e;
-}
-
-.blazored-toast-error {
-    background-color: #ba5e5e;
-}
-
-.blazored-toast-icon {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 0 1rem 0 0;
-    font-size: 2.5rem;
-}
-
-.blazored-toast-body {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-}
-
-    .blazored-toast-body .blazored-toast-header {
-        display: flex;
-        align-items: flex-start;
-        justify-content: space-between;
+<div class="blazored-toast @ToastSettings.BaseClass @ToastSettings.AdditionalClasses">
+    @if (!string.IsNullOrWhiteSpace(ToastSettings.IconClass))
+    {
+        <div class="blazored-toast-icon">
+            <i class="@ToastSettings.IconClass" aria-hidden="true"></i>
+        </div>
     }
-
-        .blazored-toast-body .blazored-toast-header h5 {
-            font-weight: bold;
-            text-transform: uppercase;
-            font-size: 1.5rem;
-            margin-bottom: 0;
-            line-height: 32px;
-        }
-
-        .blazored-toast-body .blazored-toast-header .blazored-toast-close {
-            background-color: transparent;
-            border: 0;
-            -webkit-appearance: none;
-            color: inherit;
-            font-size: 1.25rem;
-        }
-
-    .blazored-toast-body p {
-        margin-bottom: 0;
-        font-size: 1rem;
-    }
-
-@keyframes fadein {
-    from {
-        opacity: 0;
-    }
-
-    to {
-        opacity: 1;
-    }
-}
-
-@media (min-width: 576px) {
-
-    .position-topleft {
-        top: 2rem;
-        left: 2rem;
-    }
-
-    .position-topright {
-        top: 2rem;
-        right: 2rem;
-    }
-
-    .position-topcenter {
-        top: 2rem;
-        left: 50%;
-        margin-left: -15rem;
-    }
-
-    .position-bottomleft {
-        bottom: 2rem;
-        left: 2rem;
-    }
-
-    .position-bottomright {
-        bottom: 2rem;
-        right: 2rem;
-    }
-
-    .position-bottomcenter {
-        bottom: 2rem;
-        left: 50%;
-        margin-left: -15rem;
-    }
-
-    .blazored-toast {
-        width: 30rem;
-        border-radius: .25rem;
-    }
-}
+    <div class="blazored-toast-body">
+        <div class="blazored-toast-header">
+            <h5 class="blazored-toast-heading">@ToastSettings.Heading</h5>
+            <button class="blazored-toast-close" @onclick=@Close>
+                <i aria-label="icon: close" class="blazored-toast-close-icon">
+                    <svg viewBox="64 64 896 896" focusable="false" width="1em" height="1em" fill="currentColor" aria-hidden="true">
+                        <path d="M563.8 512l262.5-312.9c4.4-5.2.7-13.1-6.1-13.1h-79.8c-4.7 0-9.2 2.1-12.3 5.7L511.6 449.8 295.1 191.7c-3-3.6-7.5-5.7-12.3-5.7H203c-6.8 0-10.5 7.9-6.1 13.1L459.4 512 196.9 824.9A7.95 7.95 0 0 0 203 838h79.8c4.7 0 9.2-2.1 12.3-5.7l216.5-258.1 216.5 258.1c3 3.6 7.5 5.7 12.3 5.7h79.8c6.8 0 10.5-7.9 6.1-13.1L563.8 512z">
+                        </path>
+                    </svg>
+                </i>
+            </button>
+        </div>
+        <p class="blazored-toast-message">@ToastSettings.Message</p>
+    </div>
+</div>
