@@ -1,24 +1,179 @@
-@using Microsoft.AspNetCore.Components.Web
+public sealed class MyCryptoClass
+{
+    protected RijndaelManaged myRijndael;
 
-<div class="blazored-toast @ToastSettings.BaseClass @ToastSettings.AdditionalClasses">
-    @if (!string.IsNullOrWhiteSpace(ToastSettings.IconClass))
+    private static string encryptionKey = "random";
+
+    // Singleton pattern used here with ensured thread safety
+    protected static readonly MyCryptoClass _instance = new MyCryptoClass();
+    public static MyCryptoClass Instance
     {
-        <div class="blazored-toast-icon">
-            <i class="@ToastSettings.IconClass" aria-hidden="true"></i>
-        </div>
+        get { return _instance; }
     }
-    <div class="blazored-toast-body">
-        <div class="blazored-toast-header">
-            <h5 class="blazored-toast-heading">@ToastSettings.Heading</h5>
-            <button class="blazored-toast-close" @onclick=@Close>
-                <i aria-label="icon: close" class="blazored-toast-close-icon">
-                    <svg viewBox="64 64 896 896" focusable="false" width="1em" height="1em" fill="currentColor" aria-hidden="true">
-                        <path d="M563.8 512l262.5-312.9c4.4-5.2.7-13.1-6.1-13.1h-79.8c-4.7 0-9.2 2.1-12.3 5.7L511.6 449.8 295.1 191.7c-3-3.6-7.5-5.7-12.3-5.7H203c-6.8 0-10.5 7.9-6.1 13.1L459.4 512 196.9 824.9A7.95 7.95 0 0 0 203 838h79.8c4.7 0 9.2-2.1 12.3-5.7l216.5-258.1 216.5 258.1c3 3.6 7.5 5.7 12.3 5.7h79.8c6.8 0 10.5-7.9 6.1-13.1L563.8 512z">
-                        </path>
-                    </svg>
-                </i>
-            </button>
-        </div>
-        <p class="blazored-toast-message">@ToastSettings.Message</p>
-    </div>
-</div>
+
+    public MyCryptoClass()
+    {
+
+    }
+
+    public string DecryptText(string encryptedString)
+    {
+        using (myRijndael = new RijndaelManaged())
+        {
+            myRijndael.Key = Convert.FromBase64String(encryptionKey);
+            myRijndael.IV = new byte[16];
+            myRijndael.Mode = CipherMode.CBC;
+            myRijndael.Padding = PaddingMode.PKCS7;
+
+            Byte[] ourEnc = Convert.FromBase64String(encryptedString);
+            string ourDec = DecryptStringFromBytes(ourEnc, myRijndael.Key, myRijndael.IV);
+
+            return ourDec;
+        }
+    }
+
+
+    public string EncryptText(string plainText)
+    {
+        using (myRijndael = new RijndaelManaged())
+        {
+
+            myRijndael.Key = HexStringToByte(encryptionKey);
+            myRijndael.IV = HexStringToByte(initialisationVector);
+            myRijndael.Mode = CipherMode.CBC;
+            myRijndael.Padding = PaddingMode.PKCS7;
+
+            byte[] encrypted = EncryptStringToBytes(plainText, myRijndael.Key, myRijndael.IV);
+            string encString = Convert.ToBase64String(encrypted);
+
+            return encString;
+        }
+    }
+
+
+    protected byte[] EncryptStringToBytes(string plainText, byte[] Key, byte[] IV)
+    {
+        // Check arguments. 
+        if (plainText == null || plainText.Length <= 0)
+            throw new ArgumentNullException("plainText");
+        if (Key == null || Key.Length <= 0)
+            throw new ArgumentNullException("Key");
+        if (IV == null || IV.Length <= 0)
+            throw new ArgumentNullException("Key");
+        byte[] encrypted;
+        // Create an RijndaelManaged object 
+        // with the specified key and IV. 
+        using (RijndaelManaged rijAlg = new RijndaelManaged())
+        {
+            rijAlg.Key = Key;
+            rijAlg.IV = IV;
+
+            // Create a decrytor to perform the stream transform.
+            ICryptoTransform encryptor = rijAlg.CreateEncryptor(rijAlg.Key, rijAlg.IV);
+
+            // Create the streams used for encryption. 
+            using (MemoryStream msEncrypt = new MemoryStream())
+            {
+                using (CryptoStream csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
+                {
+                    using (StreamWriter swEncrypt = new StreamWriter(csEncrypt))
+                    {
+
+                        //Write all data to the stream.
+                        swEncrypt.Write(plainText);
+                    }
+                    encrypted = msEncrypt.ToArray();
+                }
+            }
+        }
+
+
+        // Return the encrypted bytes from the memory stream. 
+        return encrypted;
+
+    }
+
+    protected string DecryptStringFromBytes(byte[] cipherText, byte[] Key, byte[] IV)
+    {
+        // Check arguments. 
+        if (cipherText == null || cipherText.Length <= 0)
+            throw new ArgumentNullException("cipherText");
+        if (Key == null || Key.Length <= 0)
+            throw new ArgumentNullException("Key");
+        if (IV == null || IV.Length <= 0)
+            throw new ArgumentNullException("Key");
+
+        // Declare the string used to hold 
+        // the decrypted text. 
+        string plaintext = null;
+
+        // Create an RijndaelManaged object 
+        // with the specified key and IV. 
+        using (RijndaelManaged rijAlg = new RijndaelManaged())
+        {
+            rijAlg.Key = Key;
+            rijAlg.IV = IV;
+
+            // Create a decrytor to perform the stream transform.
+            ICryptoTransform decryptor = rijAlg.CreateDecryptor(rijAlg.Key, rijAlg.IV);
+
+            // Create the streams used for decryption. 
+            using (MemoryStream msDecrypt = new MemoryStream(cipherText))
+            {
+                using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
+                {
+                    using (StreamReader srDecrypt = new StreamReader(csDecrypt))
+                    {
+
+                        // Read the decrypted bytes from the decrypting stream 
+                        // and place them in a string.
+                        plaintext = srDecrypt.ReadToEnd();
+                    }
+                }
+            }
+
+        }
+
+        return plaintext;
+
+    }
+
+    public static void GenerateKeyAndIV()
+    {
+        // This code is only here for an example
+        RijndaelManaged myRijndaelManaged = new RijndaelManaged();
+        myRijndaelManaged.Mode = CipherMode.CBC;
+        myRijndaelManaged.Padding = PaddingMode.PKCS7;
+
+        myRijndaelManaged.GenerateIV();
+        myRijndaelManaged.GenerateKey();
+        string newKey = ByteArrayToHexString(myRijndaelManaged.Key);
+        string newinitVector = ByteArrayToHexString(myRijndaelManaged.IV);
+    }
+
+    protected static byte[] HexStringToByte(string hexString)
+    {
+        try
+        {
+            int bytesCount = (hexString.Length) / 2;
+            byte[] bytes = new byte[bytesCount];
+            for (int x = 0; x < bytesCount; ++x)
+            {
+                bytes[x] = Convert.ToByte(hexString.Substring(x * 2, 2), 16);
+            }
+            return bytes;
+        }
+        catch
+        {
+            throw;
+        }
+    }
+
+    public static string ByteArrayToHexString(byte[] ba)
+    {
+        StringBuilder hex = new StringBuilder(ba.Length * 2);
+        foreach (byte b in ba)
+            hex.AppendFormat("{0:x2}", b);
+        return hex.ToString();
+    }
+}
