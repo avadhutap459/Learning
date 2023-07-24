@@ -3,12 +3,57 @@ using Learning;
 using System.Collections;
 using static Learning._StaticCls_N_Interface;
 
-List<int> lst = new List<int>() { 3, 7, 12, 7 };
 
-List<List<int>>  a = CProgram.groupSort(lst);
-string s1 = String.Join("\n", a.Select(x => String.Join(" ", x)));
 
-sample s = new(8, 2.5);
+#region Property
+
+clsPropety objProperty = new clsPropety();
+
+Console.WriteLine(objProperty.name);
+Console.WriteLine(objProperty.InternalPro);
+Console.WriteLine(clsPropety.StaticPro);
+Console.WriteLine(objProperty.PublicPro);
+#endregion
+
+
+
+#region Constructor
+
+var GetPrivateConstructor = typeof(ClsPrivateConstructor).GetConstructor(System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance, null, new Type[0], null);
+
+var Instance = (ClsPrivateConstructor)GetPrivateConstructor.Invoke(null);
+
+
+ChildConstructor objChildCon = new ChildConstructor();
+
+
+MissedLearing objmissed = new MissedLearing();
+
+objmissed = new MissedLearing("Parameter constructor");
+
+MissedLearing objMis = new MissedLearing(objmissed);
+
+#endregion
+
+
+
+
+
+//ClsExceptionMech objExce = new ClsExceptionMech();
+//objExce.Divison(5);
+
+//GenericClass<int> objGeneric = new GenericClass<int>();
+//objGeneric.Add(1);
+
+//List<int> lst = new List<int>() { 3, 7, 12, 7 };
+
+//List<List<int>>  a = CProgram.groupSort(lst);
+//string s1 = String.Join("\n", a.Select(x => String.Join(" ", x)));
+
+//sample s = new(8, 2.5);
+
+sample objs = new sample(2, 2.5);
+
 Console.ReadLine();
 
 //int val = 10;
