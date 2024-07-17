@@ -12,4 +12,8 @@
     <PackageReference Include="itextsharp.xmlworker" Version="5.5.13.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="17052024\NewFolder\" />
+  </ItemGroup>
+
 </Project>

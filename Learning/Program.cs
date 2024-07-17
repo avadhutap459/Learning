@@ -1,7 +1,53 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using Learning;
+using Learning._17052024;
+using Learning._17052024.Dependancy;
+using Learning._17052024.New_Keywoard;
+using Learning._17052024.PrimeNumber;
 using System.Collections;
+using static Learning._17052024.Clspublicclassinsideprivateclass;
 using static Learning._StaticCls_N_Interface;
+
+
+ClsBase objbase = new ClsDerive(1);
+
+
+ClsNewKeywoard objkeyderive = new ClsDeriveNewKeyward();
+
+objkeyderive.Print();
+
+ClsNewKeywoard objkey = new ClsNewKeywoard();
+
+objkey.Print();
+
+ClsPrime objprime = new ClsPrime();
+
+bool _flg = objprime.Ischeckprimenumberornot(57);
+
+Class2 c2 = new Class2();
+
+foreach (int j in c2)
+{
+    Console.WriteLine(j + " ");
+    Console.WriteLine();
+}
+
+Clsconstructordependancy objcalldependancy = new Clsconstructordependancy(new ClsDependancy());
+
+objcalldependancy.print();
+
+ClsDependancy objdependancyproperty = new ClsDependancy();
+
+
+
+Clscallprivateclassinsidepublicclass objprivateaccess = new Clscallprivateclassinsidepublicclass();
+objprivateaccess.printstaticconstructorinsideprivateclass();
+
+//ClsPublicContainPrivateConstructor.PrintPrivateM();
+
+//ClsPublicContainPrivateConstructor objPrivateConstructor = new ClsPublicContainPrivateConstructor()
+
+Clsderive_protectedconstructor obj1111 = new Clsderive_protectedconstructor();
 
 
 
